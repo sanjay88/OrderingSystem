@@ -5,6 +5,7 @@ public class Product {
     private int quantity;
     private double price;
     private double amount;
+    private boolean offer;
 
     public Product(String itemName, int quantity, double price, double amount) {
         this.itemName = itemName;
@@ -45,6 +46,14 @@ public class Product {
 
     public void setAmount(double amount) {
         this.amount = amount;
+    }
+
+    public boolean isOffer() {
+        return offer;
+    }
+
+    public void setOffer(boolean offer) {
+        this.offer = offer;
     }
 
     @Override
