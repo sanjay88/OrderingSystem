@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(value = OrderController.class)
@@ -48,5 +49,24 @@ public class OrderControllerTest {
         assertEquals(200, status);
         String expectedResult = "{\"orderId\": \"1\",\"productDetails\": [{\"itemName\": \"Apple\",\"quantity\": 5,\"price\": 5.0,\"amount\": 15.0},{\"itemName\": \"Orange\",\"quantity\": 8,\"price\": 3.0,\"amount\": 18.0}],\"grandTotal\": 33.0}";
         JSONAssert.assertEquals(expectedResult,mvcResult.getResponse().getContentAsString(),false);
+    }
+
+    @Test
+    public void findOrderDetailsByOrderIdTest() throws Exception {
+        String uri = "/findOrderDetailsById/{orderId}";
+        String exampleOrderJson = "{\"orderId\":\"1\",\"productDetails\":[{\"itemName\":\"Apple\",\"quantity\":\"5\",\"price\":\"5\",\"amount\":\"\",\"offer\":\"true\"},{\"itemName\":\"Orange\",\"quantity\":\"8\",\"price\":\"3\",\"amount\":\"\",\"offer\":\"true\"}]}";
+        Product p1 = new Product("Apple",5,5.0,15.0);
+        Product p2 = new Product("Orange",8,3.0,18.0);
+        p1.setOffer(true);
+        p2.setOffer(true);
+        BillDetails mockBillDetails = new BillDetails("1", Arrays.asList(p1,p2),33.0);
+        Mockito.when(
+                orderService.findOrderDetailsByOrderId(Mockito.any(String.class))).thenReturn(mockBillDetails);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.get(uri, "2")).andReturn();
+        int status = mvcResult.getResponse().getStatus();
+        assertEquals(404, status);
+        /*String expectedResult = "{\"orderId\": \"1\",\"productDetails\": [{\"itemName\": \"Apple\",\"quantity\": 5,\"price\": 5.0,\"amount\": 15.0},{\"itemName\": \"Orange\",\"quantity\": 8,\"price\": 3.0,\"amount\": 18.0}],\"grandTotal\": 33.0}";
+        JSONAssert.assertEquals(expectedResult,mvcResult.getResponse().getContentAsString(),false);*/
+
     }
 }
